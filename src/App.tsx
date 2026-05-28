@@ -109,15 +109,6 @@ const App = () => (
               }
             />
 
-<<<<<<< Updated upstream
-            {/* Admin routes */}
-            <Route path="/dashboard/users" element={<ProtectedRoute allowedRoles={["admin"]}><UserManagement /></ProtectedRoute>} />
-            <Route path="/dashboard/pathway-config" element={<ProtectedRoute allowedRoles={["admin"]}><PathwayConfig /></ProtectedRoute>} />
-            <Route path="/dashboard/applications" element={<ProtectedRoute allowedRoles={["admin"]}><ApplicationReview /></ProtectedRoute>} />
-            <Route path="/dashboard/reports" element={<ProtectedRoute allowedRoles={["admin"]}><Reports /></ProtectedRoute>} />
-            <Route path="/dashboard/generate-recommendations" element={<ProtectedRoute allowedRoles={["admin"]}><GenerateRecommendations /></ProtectedRoute>} />
-
-=======
             {/* Admin Routes */}
             <Route
               path="/dashboard/users"
@@ -151,7 +142,14 @@ const App = () => (
                 </ProtectedRoute>
               }
             />
->>>>>>> Stashed changes
+            <Route
+              path="/dashboard/generate-recommendations"
+              element={
+                <ProtectedRoute allowedRoles={["admin"]}>
+                  <GenerateRecommendations />
+                </ProtectedRoute>
+              }
+            />
 
             {/* 404 Not Found */}
             <Route path="*" element={<NotFound />} />
