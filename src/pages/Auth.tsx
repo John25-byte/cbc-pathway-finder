@@ -41,11 +41,18 @@ const Auth = () => {
     e.preventDefault();
     setLoading(true);
     const { error } = await signUp(signupEmail, signupPassword, signupName, signupRole);
-    setLoading(false);
     if (error) {
+      setLoading(false);
       toast.error(error.message);
+      return;
+    }
+    const { error: signInError } = await signIn(signupEmail, signupPassword);
+    setLoading(false);
+    if (signInError) {
+      toast.error(signInError.message);
     } else {
-      toast.success("Account created! Please check your email to verify your account.");
+      toast.success("Account created! Welcome.");
+      navigate("/dashboard");
     }
   };
 
