@@ -1,7 +1,7 @@
 import { useAuth } from "@/contexts/AuthContext";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BarChart3, Users, FileText, GraduationCap, Upload, CheckCircle, ClipboardList, Compass } from "lucide-react";
+import { BarChart3, Users, FileText, GraduationCap, Upload, CheckCircle, ClipboardList, Compass, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const StatCard = ({ title, value, icon: Icon, color, to }: { title: string; value: string; icon: any; color: string; to: string }) => (
@@ -52,7 +52,8 @@ const Dashboard = () => {
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           <StatCard title="User Management" value="Manage" icon={Users} color="bg-pathway-stem" to="/dashboard/users" />
           <StatCard title="Pathway Config" value="Configure" icon={GraduationCap} color="bg-pathway-arts" to="/dashboard/pathway-config" />
-          <StatCard title="Applications" value="Review" icon={FileText} color="bg-pathway-social" to="/dashboard/applications" />
+          <StatCard title="Applications" value="Approve" icon={FileText} color="bg-pathway-social" to="/dashboard/applications" />
+          <StatCard title="Generate Recommendations" value="Compute" icon={Sparkles} color="bg-pathway-stem" to="/dashboard/generate-recommendations" />
           <StatCard title="Reports" value="Analytics" icon={BarChart3} color="bg-primary" to="/dashboard/reports" />
         </div>
       )}

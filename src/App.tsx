@@ -20,6 +20,7 @@ import UserManagement from "./pages/admin/UserManagement";
 import PathwayConfig from "./pages/admin/PathwayConfig";
 import ApplicationReview from "./pages/admin/ApplicationReview";
 import Reports from "./pages/admin/Reports";
+import GenerateRecommendations from "./pages/admin/GenerateRecommendations";
 import Guidance from "./pages/Guidance";
 import NotFound from "./pages/NotFound";
 
@@ -56,6 +57,8 @@ const App = () => (
             <Route path="/dashboard/pathway-config" element={<ProtectedRoute allowedRoles={["admin"]}><PathwayConfig /></ProtectedRoute>} />
             <Route path="/dashboard/applications" element={<ProtectedRoute allowedRoles={["admin"]}><ApplicationReview /></ProtectedRoute>} />
             <Route path="/dashboard/reports" element={<ProtectedRoute allowedRoles={["admin"]}><Reports /></ProtectedRoute>} />
+            <Route path="/dashboard/generate-recommendations" element={<ProtectedRoute allowedRoles={["admin"]}><GenerateRecommendations /></ProtectedRoute>} />
+
 
             <Route path="*" element={<NotFound />} />
           </Routes>
