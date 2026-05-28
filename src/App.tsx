@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { HashRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 
@@ -31,27 +31,85 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter>
+      <HashRouter>
         <AuthProvider>
           <Routes>
+            {/* Public Routes */}
             <Route path="/" element={<Landing />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/guidance" element={<Guidance />} />
 
-            {/* Protected routes */}
-            <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+            {/* Protected Routes */}
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              }
+            />
 
-            {/* Student routes */}
-            <Route path="/dashboard/results" element={<ProtectedRoute allowedRoles={["student"]}><Results /></ProtectedRoute>} />
-            <Route path="/dashboard/assessment" element={<ProtectedRoute allowedRoles={["student"]}><InterestAssessment /></ProtectedRoute>} />
-            <Route path="/dashboard/recommendation" element={<ProtectedRoute allowedRoles={["student"]}><Recommendation /></ProtectedRoute>} />
-            <Route path="/dashboard/application" element={<ProtectedRoute allowedRoles={["student"]}><Application /></ProtectedRoute>} />
+            {/* Student Routes */}
+            <Route
+              path="/dashboard/results"
+              element={
+                <ProtectedRoute allowedRoles={["student"]}>
+                  <Results />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/dashboard/assessment"
+              element={
+                <ProtectedRoute allowedRoles={["student"]}>
+                  <InterestAssessment />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/dashboard/recommendation"
+              element={
+                <ProtectedRoute allowedRoles={["student"]}>
+                  <Recommendation />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/dashboard/application"
+              element={
+                <ProtectedRoute allowedRoles={["student"]}>
+                  <Application />
+                </ProtectedRoute>
+              }
+            />
 
-            {/* Examiner routes */}
-            <Route path="/dashboard/upload-results" element={<ProtectedRoute allowedRoles={["examiner"]}><UploadResults /></ProtectedRoute>} />
-            <Route path="/dashboard/student-analytics" element={<ProtectedRoute allowedRoles={["examiner"]}><StudentAnalytics /></ProtectedRoute>} />
-            <Route path="/dashboard/verify" element={<ProtectedRoute allowedRoles={["examiner"]}><VerifyData /></ProtectedRoute>} />
+            {/* Examiner Routes */}
+            <Route
+              path="/dashboard/upload-results"
+              element={
+                <ProtectedRoute allowedRoles={["examiner"]}>
+                  <UploadResults />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/dashboard/student-analytics"
+              element={
+                <ProtectedRoute allowedRoles={["examiner"]}>
+                  <StudentAnalytics />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/dashboard/verify"
+              element={
+                <ProtectedRoute allowedRoles={["examiner"]}>
+                  <VerifyData />
+                </ProtectedRoute>
+              }
+            />
 
+<<<<<<< Updated upstream
             {/* Admin routes */}
             <Route path="/dashboard/users" element={<ProtectedRoute allowedRoles={["admin"]}><UserManagement /></ProtectedRoute>} />
             <Route path="/dashboard/pathway-config" element={<ProtectedRoute allowedRoles={["admin"]}><PathwayConfig /></ProtectedRoute>} />
@@ -59,11 +117,47 @@ const App = () => (
             <Route path="/dashboard/reports" element={<ProtectedRoute allowedRoles={["admin"]}><Reports /></ProtectedRoute>} />
             <Route path="/dashboard/generate-recommendations" element={<ProtectedRoute allowedRoles={["admin"]}><GenerateRecommendations /></ProtectedRoute>} />
 
+=======
+            {/* Admin Routes */}
+            <Route
+              path="/dashboard/users"
+              element={
+                <ProtectedRoute allowedRoles={["admin"]}>
+                  <UserManagement />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/dashboard/pathway-config"
+              element={
+                <ProtectedRoute allowedRoles={["admin"]}>
+                  <PathwayConfig />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/dashboard/applications"
+              element={
+                <ProtectedRoute allowedRoles={["admin"]}>
+                  <ApplicationReview />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/dashboard/reports"
+              element={
+                <ProtectedRoute allowedRoles={["admin"]}>
+                  <Reports />
+                </ProtectedRoute>
+              }
+            />
+>>>>>>> Stashed changes
 
+            {/* 404 Not Found */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
-      </BrowserRouter>
+      </HashRouter>
     </TooltipProvider>
   </QueryClientProvider>
 );

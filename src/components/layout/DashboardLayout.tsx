@@ -1,12 +1,23 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import {
-  LayoutDashboard, BookOpen, ClipboardList, Users, Settings, LogOut,
-  GraduationCap, Upload, BarChart3, CheckCircle, FileText, Compass, Menu, X
+  LayoutDashboard,
+  BookOpen,
+  ClipboardList,
+  Users,
+  Settings,
+  LogOut,
+  GraduationCap,
+  Upload,
+  BarChart3,
+  CheckCircle,
+  FileText,
+  Compass,
+  Menu,
+  X
 } from "lucide-react";
-import { useState } from "react";
 
 const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { role, profile, signOut } = useAuth();
@@ -16,30 +27,35 @@ const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ children }) 
 
   const handleSignOut = async () => {
     await signOut();
-    navigate("/");
+    navigate("/#/"); // HashRouter friendly redirect to home
   };
 
-  const navItems = role === "student" ? [
-    { to: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
-    { to: "/dashboard/results", icon: BarChart3, label: "My Results" },
-    { to: "/dashboard/assessment", icon: ClipboardList, label: "Interest Assessment" },
-    { to: "/dashboard/recommendation", icon: GraduationCap, label: "My Recommendation" },
-    { to: "/dashboard/application", icon: FileText, label: "Apply for Pathway" },
-    { to: "/guidance", icon: Compass, label: "Guidance Panel" },
-  ] : role === "examiner" ? [
-    { to: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
-    { to: "/dashboard/upload-results", icon: Upload, label: "Upload Results" },
-    { to: "/dashboard/student-analytics", icon: BarChart3, label: "Student Analytics" },
-    { to: "/dashboard/verify", icon: CheckCircle, label: "Verify Data" },
-    { to: "/guidance", icon: Compass, label: "Guidance Panel" },
-  ] : [
-    { to: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
-    { to: "/dashboard/users", icon: Users, label: "User Management" },
-    { to: "/dashboard/pathway-config", icon: Settings, label: "Pathway Config" },
-    { to: "/dashboard/applications", icon: FileText, label: "Applications" },
-    { to: "/dashboard/reports", icon: BarChart3, label: "Reports" },
-    { to: "/guidance", icon: Compass, label: "Guidance Panel" },
-  ];
+  const navItems =
+    role === "student"
+      ? [
+          { to: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
+          { to: "/dashboard/results", icon: BarChart3, label: "My Results" },
+          { to: "/dashboard/assessment", icon: ClipboardList, label: "Interest Assessment" },
+          { to: "/dashboard/recommendation", icon: GraduationCap, label: "My Recommendation" },
+          { to: "/dashboard/application", icon: FileText, label: "Apply for Pathway" },
+          { to: "/guidance", icon: Compass, label: "Guidance Panel" },
+        ]
+      : role === "examiner"
+      ? [
+          { to: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
+          { to: "/dashboard/upload-results", icon: Upload, label: "Upload Results" },
+          { to: "/dashboard/student-analytics", icon: BarChart3, label: "Student Analytics" },
+          { to: "/dashboard/verify", icon: CheckCircle, label: "Verify Data" },
+          { to: "/guidance", icon: Compass, label: "Guidance Panel" },
+        ]
+      : [
+          { to: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
+          { to: "/dashboard/users", icon: Users, label: "User Management" },
+          { to: "/dashboard/pathway-config", icon: Settings, label: "Pathway Config" },
+          { to: "/dashboard/applications", icon: FileText, label: "Applications" },
+          { to: "/dashboard/reports", icon: BarChart3, label: "Reports" },
+          { to: "/guidance", icon: Compass, label: "Guidance Panel" },
+        ];
 
   const SidebarContent = () => (
     <>
@@ -101,17 +117,17 @@ const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ children }) 
       )}
 
       {/* Sidebar */}
-      <aside className={`fixed lg:static inset-y-0 left-0 z-40 w-64 bg-sidebar flex flex-col transition-transform duration-200 ${
-        sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
-      }`}>
+      <aside
+        className={`fixed lg:static inset-y-0 left-0 z-40 w-64 bg-sidebar flex flex-col transition-transform duration-200 ${
+          sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+        }`}
+      >
         <SidebarContent />
       </aside>
 
       {/* Main content */}
       <main className="flex-1 min-h-screen lg:ml-0">
-        <div className="p-6 lg:p-8 max-w-7xl mx-auto">
-          {children}
-        </div>
+        <div className="p-6 lg:p-8 max-w-7xl mx-auto">{children}</div>
       </main>
     </div>
   );
