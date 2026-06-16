@@ -14,9 +14,40 @@ export type Database = {
   }
   public: {
     Tables: {
+      application_admin_notes: {
+        Row: {
+          application_id: string
+          created_at: string
+          id: string
+          notes: string
+          updated_at: string
+        }
+        Insert: {
+          application_id: string
+          created_at?: string
+          id?: string
+          notes?: string
+          updated_at?: string
+        }
+        Update: {
+          application_id?: string
+          created_at?: string
+          id?: string
+          notes?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "application_admin_notes_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: true
+            referencedRelation: "applications"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       applications: {
         Row: {
-          admin_notes: string | null
           chosen_pathway_id: string
           created_at: string
           id: string
@@ -26,7 +57,6 @@ export type Database = {
           updated_at: string
         }
         Insert: {
-          admin_notes?: string | null
           chosen_pathway_id: string
           created_at?: string
           id?: string
@@ -36,7 +66,6 @@ export type Database = {
           updated_at?: string
         }
         Update: {
-          admin_notes?: string | null
           chosen_pathway_id?: string
           created_at?: string
           id?: string
