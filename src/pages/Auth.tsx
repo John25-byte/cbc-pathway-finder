@@ -23,6 +23,8 @@ const Auth = () => {
   const [signupPassword, setSignupPassword] = useState("");
   const [signupShowPassword, setSignupShowPassword] = useState(false);
   const [signupName, setSignupName] = useState("");
+  const [signupPhone, setSignupPhone] = useState("");
+  const [signupPhoneError, setSignupPhoneError] = useState("");
   const [signupRole, setSignupRole] = useState<"student" | "examiner" | "admin">("student");
   const [loading, setLoading] = useState(false);
 
@@ -39,8 +41,26 @@ const Auth = () => {
     }
   };
 
+  const validatePhone = (phone: string) => {
+    const digits = phone.replace(/\D/g, "");
+    return digits.length === 10;
+  };
+
+  const handlePhoneChange = (value: string) => {
+    setSignupPhone(value);
+    if (value && !validatePhone(value)) {
+      setSignupPhoneError("Please enter a valid phone number");
+    } else {
+      setSignupPhoneError("");
+    }
+  };
+
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!validatePhone(signupPhone)) {
+      setSignupPhoneError("Please enter a valid phone number");
+      return;
+    }
     setLoading(true);
     const { error } = await signUp(signupEmail, signupPassword, signupName, signupRole);
     if (error) {
@@ -105,6 +125,11 @@ const Auth = () => {
                 <div className="space-y-2">
                   <Label htmlFor="signup-email">Email</Label>
                   <Input id="signup-email" type="email" value={signupEmail} onChange={(e) => setSignupEmail(e.target.value)} required />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="signup-phone">Phone Number</Label>
+                  <Input id="signup-phone" type="tel" value={signupPhone} onChange={(e) => handlePhoneChange(e.target.value)} placeholder="1234567890" required />
+                  {signupPhoneError && <p className="text-sm text-red-500">{signupPhoneError}</p>}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="signup-password">Password</Label>
