@@ -43,22 +43,33 @@ const Auth = () => {
 
   const validatePhone = (phone: string) => {
     const digits = phone.replace(/\D/g, "");
-    return digits.length === 10;
+    return digits.length === 10 && digits.startsWith("0");
   };
 
   const handlePhoneChange = (value: string) => {
-    setSignupPhone(value);
-    if (value && !validatePhone(value)) {
-      setSignupPhoneError("Please enter a valid phone number");
-    } else {
-      setSignupPhoneError("");
+    const digits = value.replace(/\D/g, "");
+    if (digits.length <= 10) {
+      setSignupPhone(digits);
+      if (digits && !validatePhone(digits)) {
+        if (digits.length === 10 && !digits.startsWith("0")) {
+          setSignupPhoneError("Phone number must start with 0");
+        } else if (digits.length < 10) {
+          setSignupPhoneError("");
+        }
+      } else {
+        setSignupPhoneError("");
+      }
     }
   };
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validatePhone(signupPhone)) {
-      setSignupPhoneError("Please enter a valid phone number");
+      if (signupPhone.length !== 10) {
+        setSignupPhoneError("Phone number must be 10 digits");
+      } else if (!signupPhone.startsWith("0")) {
+        setSignupPhoneError("Phone number must start with 0");
+      }
       return;
     }
     setLoading(true);
@@ -128,7 +139,7 @@ const Auth = () => {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="signup-phone">Phone Number</Label>
-                  <Input id="signup-phone" type="tel" value={signupPhone} onChange={(e) => handlePhoneChange(e.target.value)} placeholder="1234567890" required />
+                  <Input id="signup-phone" type="tel" value={signupPhone} onChange={(e) => handlePhoneChange(e.target.value)} placeholder="0123456789" maxLength={10} required />
                   {signupPhoneError && <p className="text-sm text-red-500">{signupPhoneError}</p>}
                 </div>
                 <div className="space-y-2">
