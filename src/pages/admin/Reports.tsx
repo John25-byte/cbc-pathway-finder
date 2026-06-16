@@ -16,12 +16,14 @@ const Reports = () => {
       const [pRes, aRes] = await Promise.all([
         supabase.from("pathways").select("id, name, color"),
         supabase.from("applications").select(`
-          id, status, admin_notes,
+          id, status,
           profiles!applications_student_id_fkey(full_name, school),
           chosen:pathways!applications_chosen_pathway_id_fkey(name, color),
           recommended:pathways!applications_recommended_pathway_id_fkey(name),
-          recommendations!inner(final_score)
+          recommendations!inner(final_score),
+          application_admin_notes(notes)
         `),
+
       ]);
 
       const pathways = pRes.data || [];
@@ -44,7 +46,7 @@ const Reports = () => {
   const exportCSV = () => {
     const headers = "Student,School,Chosen Pathway,Recommended,Score,Status,Notes\n";
     const rows = applications.map((a: any) =>
-      `"${(a.profiles as any)?.full_name}","${(a.profiles as any)?.school || ''}","${(a.chosen as any)?.name}","${(a.recommended as any)?.name || ''}","${(a.recommendations as any)?.[0]?.final_score || ''}","${a.status}","${a.admin_notes || ''}"`
+      `"${(a.profiles as any)?.full_name}","${(a.profiles as any)?.school || ''}","${(a.chosen as any)?.name}","${(a.recommended as any)?.name || ''}","${(a.recommendations as any)?.[0]?.final_score || ''}","${a.status}","${((a.application_admin_notes as any)?.[0]?.notes || '').replace(/"/g, '""')}"`
     ).join("\n");
     const blob = new Blob([headers + rows], { type: "text/csv" });
     const url = URL.createObjectURL(blob);

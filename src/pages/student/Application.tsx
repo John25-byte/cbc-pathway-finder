@@ -78,12 +78,12 @@ const Application = () => {
               <span className="text-muted-foreground">Status</span>
               <Badge className={statusColor(application.status)}>{application.status.toUpperCase()}</Badge>
             </div>
-            {application.admin_notes && (
-              <div>
-                <span className="text-muted-foreground text-sm">Admin Notes:</span>
-                <p className="mt-1 text-sm bg-muted p-3 rounded-lg">{application.admin_notes}</p>
+            {application.status !== "pending" && (
+              <div className="text-sm text-muted-foreground">
+                Your application has been reviewed. Contact your school administrator for details.
               </div>
             )}
+
             <div className="text-xs text-muted-foreground">
               Submitted: {new Date(application.created_at).toLocaleDateString()}
             </div>

@@ -24,7 +24,8 @@ const ApplicationReview = () => {
         *, 
         profiles!applications_student_id_fkey(full_name, school),
         chosen:pathways!applications_chosen_pathway_id_fkey(name, color),
-        recommended:pathways!applications_recommended_pathway_id_fkey(name, color)
+        recommended:pathways!applications_recommended_pathway_id_fkey(name, color),
+        application_admin_notes(notes)
       `).order("created_at", { ascending: false }),
       supabase.from("pathways").select("id, name, color"),
     ]);
@@ -37,13 +38,16 @@ const ApplicationReview = () => {
 
   const handleUpdate = async () => {
     if (!editApp) return;
-    const { error } = await supabase.from("applications").update({
+    const { error: statusError } = await supabase.from("applications").update({
       status: newStatus as any,
-      admin_notes: notes,
     }).eq("id", editApp.id);
-    if (error) toast.error("Failed to update");
+    const { error: notesError } = await supabase
+      .from("application_admin_notes")
+      .upsert({ application_id: editApp.id, notes }, { onConflict: "application_id" });
+    if (statusError || notesError) toast.error("Failed to update");
     else { toast.success("Application updated!"); setEditApp(null); fetchApps(); }
   };
+
 
   const statusColor = (s: string) => s === "approved" ? "bg-pathway-social text-primary-foreground" : s === "adjusted" ? "bg-pathway-arts text-primary-foreground" : "bg-muted text-muted-foreground";
 
@@ -83,7 +87,7 @@ const ApplicationReview = () => {
                   <TableCell>
                     <Dialog>
                       <DialogTrigger asChild>
-                        <Button size="sm" variant="outline" onClick={() => { setEditApp(a); setNewStatus(a.status); setNotes(a.admin_notes || ""); }}>
+                        <Button size="sm" variant="outline" onClick={() => { setEditApp(a); setNewStatus(a.status); setNotes((a.application_admin_notes as any)?.[0]?.notes || ""); }}>
                           Review
                         </Button>
                       </DialogTrigger>
