@@ -68,20 +68,30 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const signUp = async (email: string, password: string, fullName: string, role: AppRole) => {
-    const { error } = await authClient.auth.signUp({
-      email,
-      password,
-      options: {
-        data: { full_name: fullName, role },
-        emailRedirectTo: window.location.origin,
-      },
-    });
-    return { error };
+    try {
+      const { error } = await authClient.auth.signUp({
+        email,
+        password,
+        options: {
+          data: { full_name: fullName, role },
+          emailRedirectTo: `${window.location.origin}/#/auth`,
+        },
+      });
+      return { error };
+    } catch (err) {
+      console.error("[SignUp Error]", err);
+      return { error: err instanceof Error ? { message: err.message } : { message: "Sign up failed. Please try again." } };
+    }
   };
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await authClient.auth.signInWithPassword({ email, password });
-    return { error };
+    try {
+      const { error } = await authClient.auth.signInWithPassword({ email, password });
+      return { error };
+    } catch (err) {
+      console.error("[SignIn Error]", err);
+      return { error: err instanceof Error ? { message: err.message } : { message: "Sign in failed. Please try again." } };
+    }
   };
 
   const signOut = async () => {
