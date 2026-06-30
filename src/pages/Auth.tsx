@@ -30,11 +30,16 @@ const Auth = () => {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!loginEmail || !loginPassword) {
+      toast.error("Please enter email and password");
+      return;
+    }
     setLoading(true);
     const { error } = await signIn(loginEmail, loginPassword);
     setLoading(false);
     if (error) {
-      toast.error(error.message);
+      const errorMsg = error?.message || "Sign in failed. Please check your credentials and try again.";
+      toast.error(errorMsg);
     } else {
       toast.success("Welcome back!");
       navigate("/dashboard");
@@ -64,6 +69,14 @@ const Auth = () => {
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!signupName || !signupEmail || !signupPassword) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
+    if (signupPassword.length < 6) {
+      toast.error("Password must be at least 6 characters");
+      return;
+    }
     if (!validatePhone(signupPhone)) {
       if (signupPhone.length !== 10) {
         setSignupPhoneError("Phone number must be 10 digits");
@@ -76,13 +89,15 @@ const Auth = () => {
     const { error } = await signUp(signupEmail, signupPassword, signupName, signupRole);
     if (error) {
       setLoading(false);
-      toast.error(error.message);
+      const errorMsg = error?.message || "Sign up failed. Please try again.";
+      toast.error(errorMsg);
       return;
     }
     const { error: signInError } = await signIn(signupEmail, signupPassword);
     setLoading(false);
     if (signInError) {
-      toast.error(signInError.message);
+      const errorMsg = signInError?.message || "Account created but sign in failed. Please try signing in manually.";
+      toast.error(errorMsg);
     } else {
       toast.success("Account created! Welcome.");
       navigate("/dashboard");
