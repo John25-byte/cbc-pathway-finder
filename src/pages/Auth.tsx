@@ -35,14 +35,23 @@ const Auth = () => {
       return;
     }
     setLoading(true);
-    const { error } = await signIn(loginEmail, loginPassword);
-    setLoading(false);
-    if (error) {
-      const errorMsg = error?.message || "Sign in failed. Please check your credentials and try again.";
-      toast.error(errorMsg);
-    } else {
-      toast.success("Welcome back!");
-      navigate("/dashboard");
+    try {
+      const { error } = await signIn(loginEmail, loginPassword);
+      setLoading(false);
+      if (error) {
+        const errorMsg = error?.message || "Sign in failed. Please check your credentials and try again.";
+        toast.error(errorMsg);
+        if ((error as any)?.details) {
+          console.error("Sign in details:", (error as any).details);
+        }
+      } else {
+        toast.success("Welcome back!");
+        navigate("/dashboard");
+      }
+    } catch (err) {
+      setLoading(false);
+      console.error("Login exception:", err);
+      toast.error("An unexpected error occurred. Please try again.");
     }
   };
 
@@ -86,21 +95,30 @@ const Auth = () => {
       return;
     }
     setLoading(true);
-    const { error } = await signUp(signupEmail, signupPassword, signupName, signupRole);
-    if (error) {
+    try {
+      const { error } = await signUp(signupEmail, signupPassword, signupName, signupRole);
+      if (error) {
+        setLoading(false);
+        const errorMsg = error?.message || "Sign up failed. Please try again.";
+        toast.error(errorMsg);
+        if ((error as any)?.details) {
+          console.error("Signup details:", (error as any).details);
+        }
+        return;
+      }
+      const { error: signInError } = await signIn(signupEmail, signupPassword);
       setLoading(false);
-      const errorMsg = error?.message || "Sign up failed. Please try again.";
-      toast.error(errorMsg);
-      return;
-    }
-    const { error: signInError } = await signIn(signupEmail, signupPassword);
-    setLoading(false);
-    if (signInError) {
-      const errorMsg = signInError?.message || "Account created but sign in failed. Please try signing in manually.";
-      toast.error(errorMsg);
-    } else {
-      toast.success("Account created! Welcome.");
-      navigate("/dashboard");
+      if (signInError) {
+        const errorMsg = signInError?.message || "Account created but sign in failed. Please try signing in manually.";
+        toast.error(errorMsg);
+      } else {
+        toast.success("Account created! Welcome.");
+        navigate("/dashboard");
+      }
+    } catch (err) {
+      setLoading(false);
+      console.error("Signup exception:", err);
+      toast.error("An unexpected error occurred. Please try again.");
     }
   };
 

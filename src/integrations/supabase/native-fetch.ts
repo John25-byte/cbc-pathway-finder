@@ -1,90 +1,123 @@
 // Returns a fetch implementation that bypasses any monkey-patched window.fetch
-// (e.g. the Lovable preview iframe injects a proxy that breaks Supabase auth POSTs).
-// We grab an unpatched `fetch` from a freshly created same-origin iframe.
+// Works in both localhost and preview environments
 
-let cached: typeof fetch | null = null;
-let iframeRef: HTMLIFrameElement | null = null;
+let cachedFetch: typeof fetch | null = null;
 let initPromise: Promise<typeof fetch> | null = null;
 
 export function getNativeFetch(): typeof fetch {
-  if (cached) return cached;
-  if (typeof window === "undefined") return fetch;
-
-  try {
-    // Check if window.fetch is already native (not proxied)
-    const fetchStr = window.fetch.toString();
-    if (fetchStr.includes("[native code]") || fetchStr.includes("native")) {
-      cached = window.fetch.bind(window);
-      return cached;
-    }
-  } catch {
-    // ignore
+  if (cachedFetch) {
+    return cachedFetch;
   }
 
-  // If we're still initializing, return the window.fetch for now
-  // It will be replaced once the iframe is ready
-  if (!cached) {
-    initializeNativeFetch();
-    cached = window.fetch.bind(window);
+  // Immediately try to return a working fetch
+  if (typeof window === "undefined") {
+    return fetch;
   }
 
-  return cached;
+  // Try to use window.fetch directly first - it often works fine
+  cachedFetch = createWrappedFetch();
+  return cachedFetch;
 }
 
-function initializeNativeFetch() {
-  if (initPromise) return;
+function createWrappedFetch(): typeof fetch {
+  // Direct fetch wrapper that handles both localhost and preview
+  return async (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
+    try {
+      // For auth requests, ensure proper headers and handling
+      const url = typeof input === 'string' ? input : input instanceof URL ? input.toString() : input.url;
 
-  initPromise = new Promise((resolve) => {
+      // Log auth requests for debugging
+      if (url && url.includes('/auth')) {
+        console.debug('[Supabase Auth Request]', {
+          url,
+          method: init?.method || 'GET',
+          timestamp: new Date().toISOString()
+        });
+      }
+
+      // Try the request
+      const response = await window.fetch(input, init);
+
+      if (!response.ok && url && url.includes('/auth')) {
+        console.warn('[Supabase Auth Response]', {
+          url,
+          status: response.status,
+          statusText: response.statusText
+        });
+      }
+
+      return response;
+    } catch (error) {
+      const url = typeof input === 'string' ? input : input instanceof URL ? input.toString() : (input as any).url;
+      console.error('[Supabase Fetch Error]', {
+        url,
+        error: error instanceof Error ? error.message : String(error),
+        timestamp: new Date().toISOString()
+      });
+
+      // If window.fetch fails, try iframe approach as fallback
+      if (!initPromise) {
+        initPromise = getIframeFetch();
+      }
+
+      const iframeFetch = await initPromise;
+      return iframeFetch(input, init);
+    }
+  };
+}
+
+async function getIframeFetch(): Promise<typeof fetch> {
+  return new Promise((resolve) => {
     if (typeof window === "undefined") {
-      resolve(fetch);
+      resolve(window.fetch.bind(window));
       return;
     }
 
     try {
       const iframe = document.createElement("iframe");
-      iframe.style.display = "none";
-      iframe.setAttribute("aria-hidden", "true");
+      iframe.style.cssText = "display:none;";
       iframe.setAttribute("sandbox", "allow-same-origin");
       iframe.src = "about:blank";
 
-      const onReady = () => {
+      let resolved = false;
+
+      const complete = () => {
+        if (resolved) return;
+        resolved = true;
+
         try {
           const iframeWindow = iframe.contentWindow;
-          if (iframeWindow && iframeWindow.fetch) {
+          if (iframeWindow?.fetch) {
             const nativeFetch = iframeWindow.fetch.bind(iframeWindow);
-            cached = nativeFetch;
-            iframeRef = iframe;
+            if (iframe.parentElement) {
+              iframe.parentElement.removeChild(iframe);
+            }
             resolve(nativeFetch);
             return;
           }
-        } catch {
-          // ignore
+        } catch (e) {
+          console.warn("[iframe Fetch] Failed to access iframe fetch", e);
         }
 
-        // Fallback
-        cached = window.fetch.bind(window);
-        try {
-          document.documentElement.removeChild(iframe);
-        } catch {
-          // ignore
+        // Fallback to window.fetch
+        if (iframe.parentElement) {
+          try {
+            iframe.parentElement.removeChild(iframe);
+          } catch (e) {
+            // ignore
+          }
         }
-        resolve(cached!);
+        resolve(window.fetch.bind(window));
       };
 
-      iframe.addEventListener("load", onReady, { once: true });
+      iframe.addEventListener("load", complete, { once: true });
+      document.body.appendChild(iframe);
 
-      // Timeout fallback
-      const timeoutId = setTimeout(() => {
-        onReady();
-      }, 500);
-
-      iframe.addEventListener("load", () => clearTimeout(timeoutId), { once: true });
-
-      document.documentElement.appendChild(iframe);
+      // Timeout in case load doesn't fire
+      setTimeout(complete, 1000);
     } catch (error) {
-      console.warn("[Supabase Auth] Failed to initialize native fetch:", error);
-      cached = window.fetch.bind(window);
-      resolve(cached);
+      console.error("[Native Fetch Init] Failed:", error);
+      resolve(window.fetch.bind(window));
     }
   });
 }

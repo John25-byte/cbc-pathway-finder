@@ -69,6 +69,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signUp = async (email: string, password: string, fullName: string, role: AppRole) => {
     try {
+      console.debug('[AuthContext] Starting signup for:', email);
       const { error } = await authClient.auth.signUp({
         email,
         password,
@@ -77,20 +78,67 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           emailRedirectTo: `${window.location.origin}/#/auth`,
         },
       });
+
+      if (error) {
+        console.error('[AuthContext] Signup error:', error);
+      } else {
+        console.debug('[AuthContext] Signup successful');
+      }
+
       return { error };
     } catch (err) {
-      console.error("[SignUp Error]", err);
-      return { error: err instanceof Error ? { message: err.message } : { message: "Sign up failed. Please try again." } };
+      const errorMsg = err instanceof Error ? err.message : String(err);
+      console.error("[AuthContext] SignUp exception:", {
+        message: errorMsg,
+        stack: err instanceof Error ? err.stack : undefined,
+        email,
+      });
+
+      // Provide helpful error messages
+      let friendlyMessage = "Sign up failed. Please try again.";
+      if (errorMsg.includes("Failed to fetch")) {
+        friendlyMessage = "Network error. Please check your connection and try again.";
+      } else if (errorMsg.includes("already registered")) {
+        friendlyMessage = "This email is already registered.";
+      } else if (errorMsg.includes("invalid")) {
+        friendlyMessage = "Please check your email and password format.";
+      }
+
+      return { error: { message: friendlyMessage, details: errorMsg } };
     }
   };
 
   const signIn = async (email: string, password: string) => {
     try {
+      console.debug('[AuthContext] Starting signin for:', email);
       const { error } = await authClient.auth.signInWithPassword({ email, password });
+
+      if (error) {
+        console.error('[AuthContext] Signin error:', error);
+      } else {
+        console.debug('[AuthContext] Signin successful');
+      }
+
       return { error };
     } catch (err) {
-      console.error("[SignIn Error]", err);
-      return { error: err instanceof Error ? { message: err.message } : { message: "Sign in failed. Please try again." } };
+      const errorMsg = err instanceof Error ? err.message : String(err);
+      console.error("[AuthContext] SignIn exception:", {
+        message: errorMsg,
+        stack: err instanceof Error ? err.stack : undefined,
+        email,
+      });
+
+      // Provide helpful error messages
+      let friendlyMessage = "Sign in failed. Please try again.";
+      if (errorMsg.includes("Failed to fetch")) {
+        friendlyMessage = "Network error. Please check your connection and try again.";
+      } else if (errorMsg.includes("Invalid login")) {
+        friendlyMessage = "Invalid email or password.";
+      } else if (errorMsg.includes("Network")) {
+        friendlyMessage = "Network error. Check your internet connection.";
+      }
+
+      return { error: { message: friendlyMessage, details: errorMsg } };
     }
   };
 
