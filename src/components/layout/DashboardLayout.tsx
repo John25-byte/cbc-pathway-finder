@@ -129,8 +129,48 @@ const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ children }) 
       </aside>
 
       {/* Main content */}
-      <main className="flex-1 min-h-screen lg:ml-0">
-        <div className="p-6 lg:p-8 max-w-7xl mx-auto">{children}</div>
+      <main className="flex-1 min-h-screen lg:ml-0 flex flex-col">
+        {/* Top navigation bar */}
+        <div className="sticky top-0 z-30 bg-card/80 backdrop-blur-sm border-b">
+          <div className="flex items-center gap-2 px-4 lg:px-8 h-14 max-w-7xl mx-auto w-full">
+            <div className="w-10 lg:hidden" />
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => navigate(-1)}
+              className="gap-1"
+              aria-label="Go back"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              <span className="hidden sm:inline">Back</span>
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => navigate(1)}
+              className="gap-1"
+              aria-label="Go forward"
+            >
+              <span className="hidden sm:inline">Forward</span>
+              <ArrowRight className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => navigate("/dashboard")}
+              className="gap-1"
+              aria-label="Go to dashboard home"
+            >
+              <Home className="h-4 w-4" />
+              <span className="hidden sm:inline">Home</span>
+            </Button>
+            <div className="flex-1" />
+            <span className="text-sm text-muted-foreground hidden md:inline capitalize">
+              {role} Portal
+            </span>
+          </div>
+        </div>
+        <div className="p-6 lg:p-8 max-w-7xl mx-auto w-full flex-1">{children}</div>
       </main>
     </div>
   );
