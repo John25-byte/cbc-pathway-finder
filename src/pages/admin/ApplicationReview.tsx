@@ -21,15 +21,25 @@ const ApplicationReview = () => {
   const fetchApps = async () => {
     const [aRes, pRes] = await Promise.all([
       supabase.from("applications").select(`
-        *, 
-        profiles!applications_student_id_fkey(full_name, school),
+        *,
         chosen:pathways!applications_chosen_pathway_id_fkey(name, color),
         recommended:pathways!applications_recommended_pathway_id_fkey(name, color),
         application_admin_notes(notes)
       `).order("created_at", { ascending: false }),
       supabase.from("pathways").select("id, name, color"),
     ]);
-    if (aRes.data) setApplications(aRes.data);
+    if (aRes.error) toast.error(`Failed to load applications: ${aRes.error.message}`);
+    let apps = aRes.data || [];
+    if (apps.length) {
+      const studentIds = Array.from(new Set(apps.map((a: any) => a.student_id)));
+      const { data: profs } = await supabase
+        .from("profiles")
+        .select("user_id, full_name, school")
+        .in("user_id", studentIds);
+      const map = new Map((profs || []).map((p: any) => [p.user_id, p]));
+      apps = apps.map((a: any) => ({ ...a, profiles: map.get(a.student_id) || null }));
+    }
+    setApplications(apps);
     if (pRes.data) setPathways(pRes.data);
     setLoading(false);
   };
