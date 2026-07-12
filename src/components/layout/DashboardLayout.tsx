@@ -16,7 +16,10 @@ import {
   FileText,
   Compass,
   Menu,
-  X
+  X,
+  ArrowLeft,
+  ArrowRight,
+  Home,
 } from "lucide-react";
 
 const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
