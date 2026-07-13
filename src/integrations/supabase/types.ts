@@ -120,6 +120,68 @@ export type Database = {
           },
         ]
       }
+      inquiries: {
+        Row: {
+          created_at: string
+          id: string
+          recipient_role: Database["public"]["Enums"]["app_role"]
+          status: string
+          student_id: string
+          subject: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          recipient_role: Database["public"]["Enums"]["app_role"]
+          status?: string
+          student_id: string
+          subject: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          recipient_role?: Database["public"]["Enums"]["app_role"]
+          status?: string
+          student_id?: string
+          subject?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      inquiry_messages: {
+        Row: {
+          created_at: string
+          id: string
+          inquiry_id: string
+          message: string
+          sender_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          inquiry_id: string
+          message: string
+          sender_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          inquiry_id?: string
+          message?: string
+          sender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inquiry_messages_inquiry_id_fkey"
+            columns: ["inquiry_id"]
+            isOneToOne: false
+            referencedRelation: "inquiries"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       interest_questions: {
         Row: {
           created_at: string
