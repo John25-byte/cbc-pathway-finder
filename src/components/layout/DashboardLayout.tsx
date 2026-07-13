@@ -20,6 +20,7 @@ import {
   ArrowLeft,
   ArrowRight,
   Home,
+  MessageSquare,
 } from "lucide-react";
 
 const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -41,6 +42,7 @@ const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ children }) 
           { to: "/dashboard/assessment", icon: ClipboardList, label: "Interest Assessment" },
           { to: "/dashboard/recommendation", icon: GraduationCap, label: "My Recommendation" },
           { to: "/dashboard/application", icon: FileText, label: "Apply for Pathway" },
+          { to: "/dashboard/inquiries", icon: MessageSquare, label: "Inquiries" },
           { to: "/guidance", icon: Compass, label: "Guidance Panel" },
         ]
       : role === "examiner"
@@ -49,6 +51,7 @@ const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ children }) 
           { to: "/dashboard/upload-results", icon: Upload, label: "Upload Results" },
           { to: "/dashboard/student-analytics", icon: BarChart3, label: "Student Analytics" },
           { to: "/dashboard/verify", icon: CheckCircle, label: "Verify Data" },
+          { to: "/dashboard/inquiries", icon: MessageSquare, label: "Student Inquiries" },
           { to: "/guidance", icon: Compass, label: "Guidance Panel" },
         ]
       : [
@@ -56,6 +59,7 @@ const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ children }) 
           { to: "/dashboard/users", icon: Users, label: "User Management" },
           { to: "/dashboard/pathway-config", icon: Settings, label: "Pathway Config" },
           { to: "/dashboard/applications", icon: FileText, label: "Applications" },
+          { to: "/dashboard/inquiries", icon: MessageSquare, label: "Student Inquiries" },
           { to: "/dashboard/reports", icon: BarChart3, label: "Reports" },
           { to: "/guidance", icon: Compass, label: "Guidance Panel" },
         ];

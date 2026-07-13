@@ -22,6 +22,7 @@ import ApplicationReview from "./pages/admin/ApplicationReview";
 import Reports from "./pages/admin/Reports";
 import GenerateRecommendations from "./pages/admin/GenerateRecommendations";
 import Guidance from "./pages/Guidance";
+import Inquiries from "./pages/Inquiries";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -147,6 +148,16 @@ const App = () => (
               element={
                 <ProtectedRoute allowedRoles={["admin"]}>
                   <GenerateRecommendations />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Inquiries — students, examiners, admins */}
+            <Route
+              path="/dashboard/inquiries"
+              element={
+                <ProtectedRoute allowedRoles={["student", "examiner", "admin"]}>
+                  <Inquiries />
                 </ProtectedRoute>
               }
             />
