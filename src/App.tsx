@@ -24,6 +24,7 @@ import GenerateRecommendations from "./pages/admin/GenerateRecommendations";
 import Guidance from "./pages/Guidance";
 import Inquiries from "./pages/Inquiries";
 import NotFound from "./pages/NotFound";
+import OAuthConsent from "./pages/OAuthConsent";
 
 const queryClient = new QueryClient();
 
@@ -39,6 +40,7 @@ const App = () => (
             <Route path="/" element={<Landing />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/guidance" element={<Guidance />} />
+            <Route path="/oauth/consent" element={<OAuthConsent />} />
 
             {/* Protected Routes */}
             <Route

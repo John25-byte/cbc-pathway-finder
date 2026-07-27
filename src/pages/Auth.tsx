@@ -13,8 +13,17 @@ import { toast } from "sonner";
 const Auth = () => {
   const [searchParams] = useSearchParams();
   const defaultTab = searchParams.get("tab") === "signup" ? "signup" : "login";
+  const nextParam = searchParams.get("next");
   const navigate = useNavigate();
   const { signIn, signUp } = useAuth();
+
+  const goNext = () => {
+    if (nextParam && nextParam.startsWith("/")) {
+      window.location.href = nextParam;
+    } else {
+      navigate("/dashboard");
+    }
+  };
 
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");

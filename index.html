@@ -21,6 +21,14 @@
 
   <body>
     <div id="root"></div>
+    <script>
+      // Bounce non-hash OAuth consent URL into the HashRouter route.
+      (function () {
+        if (location.pathname === "/.lovable/oauth/consent") {
+          location.replace("/#/oauth/consent" + location.search);
+        }
+      })();
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
