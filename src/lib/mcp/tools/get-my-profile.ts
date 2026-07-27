@@ -1,5 +1,5 @@
 import { defineTool } from "@lovable.dev/mcp-js";
-import { supabaseForUser, notAuthenticated, ok, err } from "./_shared";
+import { supabaseForUser, notAuthenticated, ok, err } from "../_shared";
 
 export default defineTool({
   name: "get_my_profile",

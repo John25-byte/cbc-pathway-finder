@@ -1,5 +1,5 @@
 import { defineTool } from "@lovable.dev/mcp-js";
-import { supabaseAnon, ok, err } from "./_shared";
+import { supabaseAnon, ok, err } from "../_shared";
 
 export default defineTool({
   name: "list_subjects",

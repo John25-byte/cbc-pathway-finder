@@ -8,7 +8,7 @@ import { auth, defineMcp } from "npm:@lovable.dev/mcp-js@0.24.0";
 // src/lib/mcp/tools/list-pathways.ts
 import { defineTool } from "npm:@lovable.dev/mcp-js@0.24.0";
 
-// src/lib/mcp/tools/_shared.ts
+// src/lib/mcp/_shared.ts
 import { createClient } from "npm:@supabase/supabase-js@^2.97.0";
 function supabaseForUser(ctx) {
   return createClient(process.env.SUPABASE_URL, process.env.SUPABASE_PUBLISHABLE_KEY, {
